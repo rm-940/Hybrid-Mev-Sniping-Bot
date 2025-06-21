@@ -1,0 +1,7 @@
+requests
+python-dotenv
+solana
+web3
+bs4
+lxml
+aiohttp
