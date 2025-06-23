@@ -1,52 +1,48 @@
 # /bot/analyze.py
 
-from utils import call_gmgn_api, check_rugcheck, log
-from config import TWITTER_ACCOUNTS, MIN_CONFIDENCE_TO_TRADE
+import requests
+from utils import is_coin_safe, check_twitter_sentiment, detect_meme_pattern
 
-import random
+GMGN_API = "https://gmgn.ai/api/trending?chain=sol"
 
-def fake_sentiment_analysis(coin_name):
-    """Simulate Twitter + meme-based sentiment analysis."""
-    # In real version: scrape Twitter, keywords, memes, news, etc.
-    positive_keywords = ["🚀", "moon", "bull", "buy", "up only", "next 100x"]
-    negative_keywords = ["rug", "dump", "scam", "exit", "sell", "dead"]
-
-    # Fake signal for now
-    sentiment_score = random.uniform(0.3, 0.9)
-    return sentiment_score
-
-def analyze_market():
-    trending_coins = call_gmgn_api()
-    selected_coins = []
-
-    if not trending_coins:
-        log("No trending coins found.")
+def fetch_trending_coins():
+    try:
+        response = requests.get(GMGN_API)
+        if response.status_code == 200:
+            return response.json().get("coins", [])
+        else:
+            print("GMGN API error:", response.status_code)
+            return []
+    except Exception as e:
+        print("Error fetching trending coins:", e)
         return []
 
-    for coin in trending_coins[:10]:  # limit to top 10
-        name = coin.get("name")
+def analyze_market():
+    coins = fetch_trending_coins()
+    strong_candidates = []
+
+    for coin in coins:
+        symbol = coin.get("symbol")
         address = coin.get("address")
 
-        log(f"Analyzing coin: {name}")
+        print(f"\n🔍 Analyzing {symbol}...")
 
-        # Step 1: Rugcheck
-        rugcheck = check_rugcheck(address)
-        if not rugcheck.get("is_safe", False):
-            log(f"{name} failed rugcheck.")
+        if not is_coin_safe(address):
+            print(f"⚠️ {symbol} failed safety check.")
             continue
 
-        # Step 2: Sentiment (mocked for now)
-        sentiment_score = fake_sentiment_analysis(name)
-        if sentiment_score < MIN_CONFIDENCE_TO_TRADE:
-            log(f"{name} has low sentiment: {sentiment_score}")
+        if not detect_meme_pattern(symbol):
+            print(f"🧩 {symbol} doesn’t match meme trends.")
             continue
 
-        # Step 3: Passes
-        log(f"{name} PASSED analysis with score {sentiment_score}")
-        selected_coins.append({
-            "name": name,
-            "address": address,
-            "confidence": sentiment_score
-        })
+        sentiment = check_twitter_sentiment(symbol)
+        print(f"💬 Sentiment for {symbol}: {sentiment}")
 
-    return selected_coins
+        if sentiment == "positive":
+            strong_candidates.append({
+                "symbol": symbol,
+                "address": address,
+                "score": coin.get("score", 0),
+            })
+
+    return strong_candidates
