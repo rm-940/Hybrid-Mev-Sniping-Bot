@@ -1,27 +1,31 @@
-# /bot/config.py
-import os
-from dotenv import load_dotenv
+# config.py
 
-load_dotenv()
+# Wallet & RPC
+PRIVATE_KEY = "your_private_key_here"
+PUBLIC_KEY = "your_wallet_address_here"
+RPC_URL = "https://api.mainnet-beta.solana.com"  # Or a faster RPC
 
-# === Wallet ===
-WALLET_PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-WALLET_ADDRESS = os.getenv("WALLET_ADDRESS")
+# Trading thresholds
+PROFIT_TARGET = 0.5  # 50%
+STOP_LOSS = 0.2      # 20%
 
-# === APIs ===
-GMGN_API_KEY = os.getenv("GMGN_API_KEY")
+# GMGN API
+GMGN_API_KEY = "your_gmgn_api_key_here"
 
-# === Trading Config ===
-WALLET_BALANCE = 1.2  # or dynamically update later
-PROFIT_TARGET = 50
-STOP_LOSS = 20
-MAX_HOLD_HOURS = 6
+# Rugcheck
+RUGCHECK_API = "https://api.rugcheck.xyz/scan/"
 
-ENABLE_SNIPING = True
-ENABLE_ARBITRAGE = True
-ENABLE_BACKRUNNING = True
-ENABLE_MULTI_TRADE = True
+# Twitter/News
+TWITTER_HANDLES = ["elonmusk", "realDonaldTrump", "cz_binance"]
+NEWS_KEYWORDS = ["crypto", "solana", "memecoin", "regulation", "inflation", "USDT", "binance"]
 
-MEME_KEYWORDS = [
-    "pepe", "doge", "elon", "trump", "shib", "baby", "cat", "banana", "frog"
-]
+# Bot behavior
+GAS_SCALING = True  # Auto adjust based on wallet balance
+MAX_CONCURRENT_TRADES = 3
+
+# Holding logic
+ENABLE_HOLDING_LOGIC = True
+MAX_HOLD_HOURS = 24
+
+# Logging
+LOG_FILE = "logs/bot_activity.log"
