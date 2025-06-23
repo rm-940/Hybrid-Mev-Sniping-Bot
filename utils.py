@@ -1,34 +1,53 @@
 # /bot/utils.py
 
 import requests
-import logging
-from config import RUGCHECK_URL, GMGN_API_KEY
+import re
 
-def log(message):
-    print(f"[LOG] {message}")
-    logging.info(message)
-
-def call_gmgn_api():
-    url = f"https://api.gmgn.ai/v1/trending?chain=sol&key={GMGN_API_KEY}"
+# === 1. Rugcheck Integration ===
+def is_coin_safe(address):
     try:
-        res = requests.get(url)
-        return res.json()
-    except Exception as e:
-        log(f"GMGN API Error: {e}")
-        return []
+        url = f"https://api.rugcheck.xyz/check?address={address}"
+        response = requests.get(url)
+        data = response.json()
 
-def check_rugcheck(contract_address):
-    try:
-        res = requests.get(f"{RUGCHECK_URL}/check/{contract_address}")
-        return res.json()
+        return data.get("is_safe", False)  # Change based on actual API response structure
     except Exception as e:
-        log(f"RugCheck Error: {e}")
-        return {"is_safe": False}
+        print(f"Rugcheck failed for {address}: {e}")
+        return False
 
-def adjust_gas_fee(wallet_balance):
-    if wallet_balance < 10:
-        return 0.1
-    elif wallet_balance < 100:
-        return 0.3
+
+# === 2. Twitter Sentiment Analysis (basic scraping logic) ===
+def check_twitter_sentiment(symbol):
+    # Placeholder: In production use Twitter API or scraping tool
+    # This can be replaced with real sentiment logic
+    print(f"Checking Twitter sentiment for ${symbol}...")
+    positive_keywords = ["moon", "pump", "bull", "100x", "send it", "gem"]
+    negative_keywords = ["rug", "scam", "dump", "exit", "dead"]
+
+    # Simulate based on symbol name
+    text = f"{symbol} going to moon pump 100x gem"  # Fake tweet content
+
+    pos = sum(word in text.lower() for word in positive_keywords)
+    neg = sum(word in text.lower() for word in negative_keywords)
+
+    if pos > neg:
+        return "positive"
+    elif neg > pos:
+        return "negative"
     else:
-        return 0.5
+        return "neutral"
+
+
+# === 3. Meme Trend Detection ===
+def detect_meme_pattern(symbol):
+    meme_keywords = ["elon", "doge", "pepe", "trump", "baby", "moon", "cat", "frog"]
+    return any(keyword in symbol.lower() for keyword in meme_keywords)
+
+
+# === 4. Profit Estimator (optional) ===
+def estimate_profit(buy_price, current_price):
+    try:
+        return ((current_price - buy_price) / buy_price) * 100
+    except:
+        return 0
+
