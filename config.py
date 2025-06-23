@@ -1,26 +1,27 @@
 # /bot/config.py
 
-# Wallet
-PRIVATE_KEY = "your_private_key_here"
-PUBLIC_KEY = "your_public_key_here"
+# === Wallet Config ===
+WALLET_PRIVATE_KEY = "your_private_key_here"
+WALLET_ADDRESS = "your_wallet_address_here"
+WALLET_BALANCE = 1.2  # Starting balance in SOL (update dynamically later)
 
-# Solana RPC
-RPC_URL = "https://api.mainnet-beta.solana.com"
-
-# Thresholds
-TARGET_PROFIT_PERCENT = 50
-STOP_LOSS_PERCENT = 20
-
-# APIs
+# === API Keys ===
 GMGN_API_KEY = "your_gmgn_api_key_here"
-RUGCHECK_URL = "https://api.rugcheck.xyz"
-TWITTER_ACCOUNTS = ["elonmusk", "cz_binance", "realdonaldtrump"]
+RUGCHECK_API = "https://api.rugcheck.xyz/"
+TWITTER_USERS = ["elonmusk", "realDonaldTrump", "cz_binance"]
 
-# Trading Settings
-MAX_CONCURRENT_TRADES = 4
-MIN_CONFIDENCE_TO_TRADE = 0.75  # for holding logic
-GAS_FEE_TIERS = {
-    "low": 0.1,
-    "mid": 0.3,
-    "high": 0.5
-}
+# === Trade Thresholds ===
+PROFIT_TARGET = 50  # 50% gain per trade
+STOP_LOSS = 20      # 20% drop triggers exit
+MAX_HOLD_HOURS = 6  # Max hold if not auto-selling
+
+# === Strategy Flags ===
+ENABLE_SNIPING = True
+ENABLE_ARBITRAGE = True
+ENABLE_BACKRUNNING = True
+ENABLE_MULTI_TRADE = True
+
+# === Memecoin Logic ===
+MEME_KEYWORDS = [
+    "pepe", "doge", "elon", "trump", "shib", "baby", "cat", "banana", "frog" ,"dog"
+]
